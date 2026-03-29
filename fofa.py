@@ -106,7 +106,7 @@ logger = Logger()
 def validate_config():
     if not FOFA_KEY:
         logger.error("请配置环境变量 FOFA_KEY。")
-        console.print("您可以从 https://fofoapi.com/userInfo 获取您的key")
+        console.print("您可以从 http://fofapi.services/api.php/userInfo 获取您的key")
         sys.exit(1)
     
     if FOFA_SIZE < 1:
@@ -234,7 +234,7 @@ async def query_fofa_api_generic(
     logger.info(f"Starting Fofa API query for {description}...")
     
     query_base64 = base64.b64encode(query_string.encode()).decode()
-    fofa_url = f"https://fofoapi.com{FOFA_SEARCH_PATH}"
+    fofa_url = f"http://fofapi.services/api.php{FOFA_SEARCH_PATH}"
     params = {
         'key': FOFA_KEY,
         'qbase64': query_base64,
@@ -273,7 +273,7 @@ async def query_fofa_api_generic(
         raise Exception(f"Fofa query failed: {e}")
 
 async def query_fofa_api(client: httpx.AsyncClient) -> List[FofaTarget]:
-    subscription_token_query = "/api/v1/client/subscribe?token="
+    subscription_token_query = r'''body="/api/v1/client/subscribe?token=" || header="/api/v1/client/subscribe?token=" || response:"'type': 'hysteria2'" '''
     return await query_fofa_api_generic(client, subscription_token_query, "subscription token search")
 
 async def query_fofa_api_for_subscription_headers(client: httpx.AsyncClient) -> List[FofaTarget]:
